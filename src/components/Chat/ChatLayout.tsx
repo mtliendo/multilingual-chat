@@ -3,12 +3,16 @@ import { motion } from "framer-motion"
 import ChatHeader from "./ChatHeader"
 import MessageList from "./MessageList"
 import MessageInput from "./MessageInput"
+import UserSettings from "./UserSettings"
 import { events, generateClient } from "aws-amplify/api"
 import { EventsChannel } from "aws-amplify/api"
 import { Schema } from "../../../amplify/data/resource"
-const client = generateClient<Schema>()
+import { useChat } from "../../context/ChatContext"
 
+const client = generateClient<Schema>()
+//additonal info: The supported languagees are : ["en", "es", "fr"]
 const ChatLayout = () => {
+  const { currentUser, addMessage } = useChat()
   const sub = useRef<ReturnType<EventsChannel["subscribe"]> | null>(
     null
   ) as MutableRefObject<ReturnType<EventsChannel["subscribe"]> | null>
@@ -24,7 +28,9 @@ const ChatLayout = () => {
     //     "originalLanguage": "en",
     //     "user": "Michael Liendo"
     // }
-    console.log("great we got an event!", data.event)
+    if (data.event) {
+      addMessage(data.event)
+    }
   }
 
   useEffect(() => {
@@ -51,11 +57,13 @@ const ChatLayout = () => {
   }, [])
 
   const handleSendMessage = async (message: string) => {
-    //I don't care about the response, I just want to publish an event since the useEffect will handle the incoming event
-    await client.mutations.invokeOrkesConductor({
-      messageText: message,
-      username: "John Doe",
-    })
+    await client.mutations.invokeOrkesConductor(
+      {
+        messageText: message,
+        username: currentUser.name,
+      },
+      { authMode: "apiKey" }
+    )
   }
 
   return (
@@ -65,9 +73,14 @@ const ChatLayout = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <ChatHeader />
+      <div className="flex justify-between items-center">
+        <ChatHeader />
+        <div className="p-4">
+          <UserSettings />
+        </div>
+      </div>
       <MessageList />
-      <MessageInput />
+      <MessageInput onSendMessage={handleSendMessage} />
     </motion.div>
   )
 }

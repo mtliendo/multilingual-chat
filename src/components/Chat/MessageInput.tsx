@@ -1,55 +1,57 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Send, Mic } from 'lucide-react';
-import { useChat } from '../../context/ChatContext';
+import React, { useState, useRef, useEffect } from "react"
+import { motion } from "framer-motion"
+import { Send, Mic } from "lucide-react"
 
-const MessageInput: React.FC = () => {
-  const [message, setMessage] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const { sendMessage } = useChat();
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  
+interface MessageInputProps {
+  onSendMessage: (message: string) => void
+}
+
+const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
+  const [message, setMessage] = useState("")
+  const [isRecording, setIsRecording] = useState(false)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+
   useEffect(() => {
     // Focus input on component mount
-    inputRef.current?.focus();
-  }, []);
-  
+    inputRef.current?.focus()
+  }, [])
+
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (message.trim()) {
-      sendMessage(message);
-      setMessage('');
+      onSendMessage(message)
+      setMessage("")
     }
-  };
-  
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e)
     }
-  };
-  
+  }
+
   // Handle text area resize as content grows
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const target = e.target;
-    target.style.height = 'auto';
-    target.style.height = `${Math.min(target.scrollHeight, 120)}px`;
-  };
-  
+    const target = e.target
+    target.style.height = "auto"
+    target.style.height = `${Math.min(target.scrollHeight, 120)}px`
+  }
+
   const toggleRecording = () => {
     // This would be implemented with a real speech-to-text API
-    setIsRecording(!isRecording);
+    setIsRecording(!isRecording)
     if (!isRecording) {
       // Start recording simulation
       setTimeout(() => {
-        setMessage(prev => prev + " I'm speaking now...");
-        setIsRecording(false);
-      }, 2000);
+        setMessage((prev) => prev + " I'm speaking now...")
+        setIsRecording(false)
+      }, 2000)
     }
-  };
+  }
 
   return (
-    <motion.div 
+    <motion.div
       className="border-t border-gray-200 bg-white p-4"
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -64,25 +66,27 @@ const MessageInput: React.FC = () => {
           onKeyDown={handleKeyDown}
           placeholder="Type a message in any language..."
           className="input-primary min-h-[44px] max-h-[120px] resize-none flex-1"
-          style={{ height: '44px' }}
+          style={{ height: "44px" }}
         />
-        
+
         <motion.button
           type="button"
           onClick={toggleRecording}
           className={`rounded-full p-3 ${
-            isRecording ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700'
+            isRecording ? "bg-red-500 text-white" : "bg-gray-100 text-gray-700"
           } hover:bg-opacity-80 transition-colors`}
           whileTap={{ scale: 0.95 }}
         >
           <Mic size={20} />
         </motion.button>
-        
+
         <motion.button
           type="submit"
           disabled={!message.trim()}
           className={`rounded-full p-3 ${
-            message.trim() ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-400'
+            message.trim()
+              ? "bg-primary-500 text-white"
+              : "bg-gray-200 text-gray-400"
           } transition-colors`}
           whileTap={{ scale: 0.95 }}
         >
@@ -90,7 +94,7 @@ const MessageInput: React.FC = () => {
         </motion.button>
       </form>
     </motion.div>
-  );
-};
+  )
+}
 
-export default MessageInput;
+export default MessageInput
