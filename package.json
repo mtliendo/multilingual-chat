@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-appsync/utils": "^2.0.3",
+    "@aws-sdk/client-bedrock-runtime": "^3.810.0",
+    "@aws-sdk/client-comprehend": "^3.808.0",
     "@headlessui/react": "^1.7.18",
     "aws-amplify": "^6.14.4",
     "framer-motion": "^11.0.6",
