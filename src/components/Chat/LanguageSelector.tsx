@@ -37,14 +37,14 @@ const LanguageSelector: React.FC = () => {
           <Globe size={16} className="text-gray-500" />
         </motion.button>
 
-        <motion.button
+        {/* <motion.button
           onClick={toggleViewOriginal}
           className={`btn ${viewingOriginal ? "btn-primary" : "btn-ghost"}`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
           {viewingOriginal ? "Viewing Original" : "View Translated"}
-        </motion.button>
+        </motion.button> */}
       </div>
 
       <AnimatePresence>
